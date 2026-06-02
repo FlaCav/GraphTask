@@ -76,7 +76,7 @@ export default function ListPage() {
 
   function handleTitleBlur() {
     // Restore if left empty
-    if (!titleRef.current?.textContent?.trim() && graph) {
+    if (titleRef.current && !titleRef.current.textContent?.trim() && graph) {
       titleRef.current.textContent = graph.name;
     }
   }

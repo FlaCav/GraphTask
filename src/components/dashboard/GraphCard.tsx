@@ -29,7 +29,7 @@ export default function GraphCard({ graph, onDeleted }: Props) {
   const [deleting, setDeleting] = useState(false);
   const [hovering, setHovering] = useState(false);
 
-  function handleClick(e: React.MouseEvent) {
+  function handleClick() {
     if (confirmDelete) return;
     navigate(`/graph/${graph.id}`);
   }

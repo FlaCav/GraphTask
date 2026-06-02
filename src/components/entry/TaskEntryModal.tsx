@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useAppStore } from '../../stores/useAppStore';
 import { Task } from '../../lib/types';
-import { wouldCreateCycle } from '../../lib/dag';
 
 type Step = 'name' | 'prereqs' | 'dependents' | 'confirm';
 
@@ -150,9 +149,6 @@ export default function TaskEntryModal({ graphId, onClose, onShowToast }: Props)
       ? 'No prerequisites'
       : selectedTasks.map(t => t.title).join(', ');
     appendMessage({ role: 'user', content: userMsg });
-
-    // Check if any remaining tasks could be dependents (cycle-safe)
-    const remainingTasks = tasks.filter(t => !selected.has(t.id));
 
     if (skip) setPrereqIds(new Set());
 
@@ -446,8 +442,6 @@ function SelectionArea({
   tasks, selected, disabledIds, accentColor,
   onToggle, onSubmit, onSkip, submitLabel, skipLabel,
 }: SelectionAreaProps) {
-  const isPrereq = accentColor === '#9CAEF6';
-
   return (
     <div className="space-y-3">
       {/* Task pills grid */}

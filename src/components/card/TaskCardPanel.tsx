@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { useAppStore } from '../../stores/useAppStore';
-import { Task, TaskResource } from '../../lib/types';
+import { TaskResource } from '../../lib/types';
 import DependencyChip from './DependencyChip';
 import TaskResources from './TaskResources';
 import DependencyPicker from './DependencyPicker';
-import { newId } from '../../lib/ids';
 
 interface Props {
   taskId: string;

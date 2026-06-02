@@ -16,10 +16,6 @@ interface RawTask {
 interface RawEdge {
   id: string; graph_id: string; source_id: string; target_id: string;
 }
-interface RawResource {
-  id: string; task_id: string; label: string; url: string; kind: string;
-}
-
 function mapGraph(r: RawGraph): Graph {
   return { id: r.id, name: r.name, createdAt: r.created_at, updatedAt: r.updated_at };
 }
@@ -33,9 +29,7 @@ function mapTask(r: RawTask): Task {
 function mapEdge(r: RawEdge): Edge {
   return { id: r.id, graphId: r.graph_id, sourceId: r.source_id, targetId: r.target_id };
 }
-function mapResource(r: RawResource): TaskResource {
-  return { id: r.id, taskId: r.task_id, label: r.label, url: r.url, kind: r.kind as TaskResource['kind'] };
-}
+// Note: TaskResource mapping is done inline at fetch sites (kept for future use).
 
 // ── Store interface ───────────────────────────────────────────────────────────
 
