@@ -6,6 +6,21 @@ Instead of a flat checklist, GraphTask understands which tasks **block** which. 
 
 ---
 
+## 📥 Download
+
+Grab the latest installer for your OS from the **[Releases page](https://github.com/FlaCav/GraphTask/releases/latest)**:
+
+| OS | File | Notes |
+|---|---|---|
+| 🪟 Windows | `.msi` or `.exe` | SmartScreen warns "unrecognized publisher" — click *More info* → *Run anyway* |
+| 🍎 macOS (Apple Silicon) | `.dmg` (aarch64) | First open: right-click app → *Open*, or run `xattr -dr com.apple.quarantine /Applications/GraphTask.app` |
+| 🍎 macOS (Intel) | `.dmg` (x86_64) | Same Gatekeeper note as above |
+| 🐧 Linux | `.AppImage`, `.deb`, or `.rpm` | `chmod +x` the `.AppImage` and double-click, or install the `.deb`/`.rpm` with your package manager |
+
+Builds are unsigned, so each OS shows a one-time "unverified publisher" prompt on first install. No data is collected.
+
+---
+
 ## ✨ What it does
 
 - 📋 **Graphs of tasks** — Each project is its own graph. Dashboard shows all graphs with progress rings.
@@ -113,9 +128,9 @@ Single SQLite file. Portable across operating systems — copy it to migrate mac
 
 | OS | Path |
 |---|---|
-| 🪟 Windows | `%APPDATA%\com.tauri.dev\graphtask.db` |
-| 🍎 macOS | `~/Library/Application Support/com.tauri.dev/graphtask.db` |
-| 🐧 Linux | `~/.local/share/com.tauri.dev/graphtask.db` |
+| 🪟 Windows | `%APPDATA%\com.flacav.graphtask\graphtask.db` |
+| 🍎 macOS | `~/Library/Application Support/com.flacav.graphtask/graphtask.db` |
+| 🐧 Linux | `~/.local/share/com.flacav.graphtask/graphtask.db` |
 
 Open it with [DB Browser for SQLite](https://sqlitebrowser.org), the `sqlite3` CLI, or any VS Code SQLite extension.
 
