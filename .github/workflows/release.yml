@@ -1,0 +1,86 @@
+name: Release
+
+# Triggers:
+#   - Pushing a git tag like `v0.1.0` -> full release build for all platforms.
+#   - Manual run from the Actions tab (workflow_dispatch).
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-tauri:
+    name: Build (${{ matrix.platform }} ${{ matrix.args }})
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Apple Silicon (M1/M2/M3/...)
+          - platform: 'macos-latest'
+            args: '--target aarch64-apple-darwin'
+          # Intel Macs
+          - platform: 'macos-latest'
+            args: '--target x86_64-apple-darwin'
+          # Linux (x86_64)
+          - platform: 'ubuntu-22.04'
+            args: ''
+          # Windows (x86_64)
+          - platform: 'windows-latest'
+            args: ''
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Setup Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Rust build cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install Linux system dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libayatana-appindicator3-dev
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build and publish Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: 'GraphTask ${{ github.ref_name }}'
+          releaseBody: |
+            See assets below to download and install this version.
+
+            ## Install notes
+
+            - **Windows**: SmartScreen may warn that the publisher is unrecognized — click *More info* → *Run anyway*.
+            - **macOS**: First open may be blocked by Gatekeeper. Right-click the app → *Open*, or run `xattr -dr com.apple.quarantine /Applications/GraphTask.app`.
+            - **Linux**: `chmod +x` the `.AppImage` and double-click, or install the `.deb`/`.rpm` with your package manager.
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
