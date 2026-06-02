@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { useAppStore } from '../../stores/useAppStore';
 import { useSortedTasks } from '../../hooks/useSortedTasks';
 import { midpointPosition } from '../../lib/dag';
@@ -31,8 +31,14 @@ export default function TaskList({ graphId, onTaskClick, onShowToast }: Props) {
   const pillRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
   const [arcState, setArcState] = useState<ArcState>(EMPTY_ARC);
-  const [dragTaskId, setDragTaskId] = useState<string | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
+
+  // Local copy of order that we mutate during a drag.
+  // Synced from sortedTasks whenever the store updates (and we're not mid-drag).
+  const [localOrder, setLocalOrder] = useState<Task[]>(sortedTasks);
+  useEffect(() => {
+    if (!draggingTaskId) setLocalOrder(sortedTasks);
+  }, [sortedTasks, draggingTaskId]);
 
   // Clear arcs on window resize (positions would be stale)
   useEffect(() => {
@@ -72,71 +78,66 @@ export default function TaskList({ graphId, onTaskClick, onShowToast }: Props) {
     setArcState({ prereqArcs, dependentArcs, hoveredTaskId: taskId });
   }, [edges]);
 
-  function handleHoverEnter(taskId: string) { computeArcs(taskId); }
+  function handleHoverEnter(taskId: string) {
+    if (draggingTaskId) return;
+    computeArcs(taskId);
+  }
   function handleHoverLeave() { setArcState(EMPTY_ARC); }
 
-  // ── Drag and drop ───────────────────────────────────────────────────────────
+  // ── Drag commit ─────────────────────────────────────────────────────────────
 
-  function handleDragStart(e: React.DragEvent, taskId: string) {
-    setArcState(EMPTY_ARC);
-    setDragTaskId(taskId);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', taskId);
-  }
+  function commitReorder(movedTaskId: string) {
+    setDraggingTaskId(null);
 
-  function handleDragOver(e: React.DragEvent, index: number) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverIndex(index);
-  }
-
-  function handleDrop(e: React.DragEvent, dropIndex: number) {
-    e.preventDefault();
-    const sourceId = dragTaskId;
-    if (!sourceId) return;
-
-    const sourceIndex = sortedTasks.findIndex(t => t.id === sourceId);
-    if (sourceIndex === -1 || sourceIndex === dropIndex) {
-      setDragTaskId(null); setDragOverIndex(null); return;
+    const newIndex = localOrder.findIndex(t => t.id === movedTaskId);
+    const oldIndex = sortedTasks.findIndex(t => t.id === movedTaskId);
+    if (newIndex === -1 || oldIndex === -1 || newIndex === oldIndex) {
+      // No change — re-sync localOrder to canonical sortedTasks
+      setLocalOrder(sortedTasks);
+      return;
     }
 
-    const prereqIds = new Set(edges.filter(e => e.targetId === sourceId).map(e => e.sourceId));
-    const dependentIds = new Set(edges.filter(e => e.sourceId === sourceId).map(e => e.targetId));
+    // DAG validation: can't move above any prereq or below any dependent
+    const prereqIds = new Set(edges.filter(e => e.targetId === movedTaskId).map(e => e.sourceId));
+    const dependentIds = new Set(edges.filter(e => e.sourceId === movedTaskId).map(e => e.targetId));
 
-    let lastPrereqIndex = -1;
-    let firstDependentIndex = sortedTasks.length;
-    sortedTasks.forEach((t, i) => {
-      if (t.id === sourceId) return;
-      if (prereqIds.has(t.id)) lastPrereqIndex = Math.max(lastPrereqIndex, i);
-      if (dependentIds.has(t.id)) firstDependentIndex = Math.min(firstDependentIndex, i);
+    let lastPrereqIdx = -1;
+    let firstDependentIdx = localOrder.length;
+    localOrder.forEach((t, i) => {
+      if (t.id === movedTaskId) return;
+      if (prereqIds.has(t.id)) lastPrereqIdx = Math.max(lastPrereqIdx, i);
+      if (dependentIds.has(t.id)) firstDependentIdx = Math.min(firstDependentIdx, i);
     });
 
-    const effectiveDropIndex = dropIndex > sourceIndex ? dropIndex - 1 : dropIndex;
-    if (effectiveDropIndex <= lastPrereqIndex) {
+    if (newIndex <= lastPrereqIdx) {
       onShowToast({ text: 'Cannot move above a prerequisite task.', type: 'error' });
-      setDragTaskId(null); setDragOverIndex(null); return;
+      setLocalOrder(sortedTasks);
+      return;
     }
-    if (effectiveDropIndex >= firstDependentIndex) {
+    if (newIndex >= firstDependentIdx) {
       onShowToast({ text: 'Cannot move below a dependent task.', type: 'error' });
-      setDragTaskId(null); setDragOverIndex(null); return;
+      setLocalOrder(sortedTasks);
+      return;
     }
 
-    const tasksWithoutSource = sortedTasks.filter(t => t.id !== sourceId);
-    const before: Task | null = dropIndex > 0 ? (tasksWithoutSource[dropIndex - 1] ?? null) : null;
-    const after: Task | null = tasksWithoutSource[dropIndex] ?? null;
-    reorderTask(sourceId, midpointPosition(before, after)).catch(() =>
-      onShowToast({ text: 'Failed to reorder task.', type: 'error' })
-    );
-    setDragTaskId(null); setDragOverIndex(null);
-  }
+    const before: Task | null = newIndex > 0 ? (localOrder[newIndex - 1] ?? null) : null;
+    const after: Task | null = newIndex < localOrder.length - 1
+      ? (localOrder[newIndex + 1] ?? null)
+      : null;
+    const beforeFiltered = before?.id === movedTaskId ? null : before;
+    const afterFiltered = after?.id === movedTaskId ? null : after;
 
-  function handleDragEnd() { setDragTaskId(null); setDragOverIndex(null); }
+    reorderTask(movedTaskId, midpointPosition(beforeFiltered, afterFiltered)).catch(() => {
+      onShowToast({ text: 'Failed to reorder task.', type: 'error' });
+      setLocalOrder(sortedTasks);
+    });
+  }
 
   // ── Derived ──────────────────────────────────────────────────────────────────
 
   const prereqHighlightIds = new Set(arcState.prereqArcs.map(a => a.taskId));
   const dependentHighlightIds = new Set(arcState.dependentArcs.map(a => a.taskId));
-  const arcsVisible = arcState.hoveredTaskId !== null &&
+  const arcsVisible = !draggingTaskId && arcState.hoveredTaskId !== null &&
     (arcState.prereqArcs.length > 0 || arcState.dependentArcs.length > 0);
 
   // ── Empty state ──────────────────────────────────────────────────────────────
@@ -166,29 +167,29 @@ export default function TaskList({ graphId, onTaskClick, onShowToast }: Props) {
         hoveredTaskId={arcState.hoveredTaskId}
       />
 
-      <div ref={containerRef} className="flex flex-col gap-3">
+      <Reorder.Group
+        ref={containerRef as unknown as React.RefObject<HTMLDivElement>}
+        axis="y"
+        values={localOrder}
+        onReorder={setLocalOrder}
+        as="div"
+        className="flex flex-col gap-3"
+      >
         <AnimatePresence initial={false}>
-          {sortedTasks.map((task, index) => (
-            <motion.div
+          {localOrder.map((task) => (
+            <Reorder.Item
               key={task.id}
-              layout
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 16, scale: 0.95 }}
-              transition={{ duration: 0.28, ease: [0.34, 1.56, 0.64, 1] }}
+              value={task}
+              as="div"
+              dragListener={true}
+              onDragStart={() => {
+                setArcState(EMPTY_ARC);
+                setDraggingTaskId(task.id);
+              }}
+              onDragEnd={() => commitReorder(task.id)}
+              style={{ touchAction: 'none' }}
+              whileDrag={{ scale: 1.03, zIndex: 10 }}
             >
-              {/* Drop zone indicator */}
-              <AnimatePresence>
-                {dragTaskId && dragTaskId !== task.id && dragOverIndex === index && (
-                  <motion.div
-                    initial={{ scaleX: 0, opacity: 0 }}
-                    animate={{ scaleX: 1, opacity: 1 }}
-                    exit={{ scaleX: 0, opacity: 0 }}
-                    className="h-1 rounded-full bg-[#20dfb9]/50 mx-8 mb-2"
-                  />
-                )}
-              </AnimatePresence>
-
               <TaskPill
                 ref={el => {
                   if (el) pillRefs.current.set(task.id, el);
@@ -201,36 +202,15 @@ export default function TaskList({ graphId, onTaskClick, onShowToast }: Props) {
                 dependentHighlight={dependentHighlightIds.has(task.id)}
                 onHoverEnter={() => handleHoverEnter(task.id)}
                 onHoverLeave={handleHoverLeave}
-                onClick={() => onTaskClick(task.id)}
-                draggable={dragTaskId === null}
-                onDragStart={e => handleDragStart(e, task.id)}
-                onDragOver={e => handleDragOver(e, index)}
-                onDrop={e => handleDrop(e, index)}
-                onDragEnd={handleDragEnd}
-                isDragOver={dragOverIndex === index && dragTaskId !== task.id}
+                onClick={() => {
+                  if (!draggingTaskId) onTaskClick(task.id);
+                }}
+                isDragging={draggingTaskId === task.id}
               />
-            </motion.div>
+            </Reorder.Item>
           ))}
         </AnimatePresence>
-
-        {/* Drop zone at end of list */}
-        <AnimatePresence>
-          {dragTaskId && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onDragOver={e => handleDragOver(e, sortedTasks.length)}
-              onDrop={e => handleDrop(e, sortedTasks.length)}
-              className="h-12 rounded-full border-2 border-dashed border-[#20dfb9]/30 flex items-center justify-center"
-            >
-              {dragOverIndex === sortedTasks.length && (
-                <span className="text-[#20dfb9]/50 text-sm font-display font-semibold">Drop here</span>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      </Reorder.Group>
     </>
   );
 }

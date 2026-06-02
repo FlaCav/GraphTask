@@ -11,13 +11,7 @@ interface Props {
   onHoverEnter: () => void;
   onHoverLeave: () => void;
   onClick: () => void;
-  // Drag
-  draggable: boolean;
-  onDragStart: (e: React.DragEvent) => void;
-  onDragOver: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent) => void;
-  onDragEnd: (e: React.DragEvent) => void;
-  isDragOver: boolean;
+  isDragging?: boolean;
 }
 
 const STATUS_ICON: Record<TaskStatus, string> = {
@@ -57,12 +51,7 @@ const TaskPill = forwardRef<HTMLDivElement, Props>(({
   onHoverEnter,
   onHoverLeave,
   onClick,
-  draggable,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onDragEnd,
-  isDragOver,
+  isDragging = false,
 }, ref) => {
   const cycleTaskStatus = useAppStore(s => s.cycleTaskStatus);
 
@@ -82,21 +71,16 @@ const TaskPill = forwardRef<HTMLDivElement, Props>(({
   return (
     <div
       ref={ref}
-      draggable={draggable}
-      onDragStart={onDragStart}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
-      onDragEnd={onDragEnd}
       onMouseEnter={onHoverEnter}
       onMouseLeave={onHoverLeave}
       onClick={onClick}
       className={`
         relative bg-white h-[80px] rounded-full shadow-[0_4px_16px_rgba(158,188,182,0.12)]
-        flex items-center justify-between px-6 cursor-pointer
+        flex items-center justify-between px-6 cursor-grab active:cursor-grabbing
         border transition-all duration-[400ms] select-none
         ${borderStyle}
-        ${isHovered ? 'shadow-[0_20px_40px_rgba(74,74,74,0.08)] translate-x-2 bg-[#F8FDFB]' : ''}
-        ${isDragOver ? 'scale-[1.02] border-[#20dfb9]/50' : ''}
+        ${isHovered && !isDragging ? 'shadow-[0_20px_40px_rgba(74,74,74,0.08)] translate-x-2 bg-[#F8FDFB]' : ''}
+        ${isDragging ? 'opacity-90 shadow-[0_30px_60px_rgba(74,74,74,0.15)]' : ''}
       `}
       style={{ transitionTimingFunction: 'cubic-bezier(0.34,1.56,0.64,1)' }}
     >
