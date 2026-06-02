@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GraphTask - Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Nunito:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#20dfb9",
+          "background-light": "#FDFBF7",
+          "background-dark": "#11211e",
+          
+          /* Product Specific Overrides aligned with Luminous Task Flow system */
+          "gt-primary": "#20dfb9",
+          "gt-background": "#FDFBF7",
+          "gt-surface": "#FFFFFF",
+          "gt-text": "#4A4A4A",
+          "gt-muted": "#B5B5B5",
+          "gt-shimmer": "#F5F3ED"
+        },
+        fontFamily: {
+          "display": ["Quicksand", "sans-serif"],
+          "body": ["Nunito", "sans-serif"]
+        },
+        borderRadius: {
+            "DEFAULT": "1rem", 
+            "lg": "2rem", 
+            "xl": "3rem", 
+            "full": "9999px",
+            "gt-card": "24px"
+        },
+        boxShadow: {
+            'gt-soft': '0 12px 32px rgba(32, 223, 185, 0.15)',
+            'gt-float': '0 20px 40px rgba(74, 74, 74, 0.08)',
+        },
+        transitionTimingFunction: {
+            'gt-spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+        }
+      },
+    },
+  }
+</script>
+<style>
+    body {
+        font-family: 'Nunito', sans-serif;
+        background-color: #FDFBF7; /* gt-background */
+        color: #4A4A4A; /* gt-text */
+    }
+    h1, h2, h3, h4, h5, h6, .font-display {
+        font-family: 'Quicksand', sans-serif;
+    }
+    
+    /* Shimmer Animation for loading state */
+    @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+    }
+    .animate-shimmer {
+        animation: shimmer 2s infinite linear;
+        background: linear-gradient(to right, #F5F3ED 4%, #EFEBE1 25%, #F5F3ED 36%);
+        background-size: 1000px 100%;
+    }
+</style>
+</head>
+<body class="min-h-screen antialiased bg-gt-background text-gt-text selection:bg-gt-primary selection:text-white">
+<!-- Shared TopNavBar (Included as it is a Destination screen) -->
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden bg-transparent">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-8 md:px-16 lg:px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col w-full max-w-[1080px] flex-1 gap-8 pt-8">
+<!-- Custom Header matching spec -->
+<header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 px-4 pt-12 pb-6 min-h-[120px]">
+<div class="flex flex-col gap-2">
+<p class="text-gt-muted text-sm font-semibold tracking-wider uppercase font-body">Dashboard</p>
+<h1 class="text-gt-text text-[32px] font-bold leading-tight tracking-[-0.02em] font-display">Good morning.</h1>
+</div>
+<button class="group flex items-center justify-center gap-2 rounded-full h-[48px] px-6 bg-gt-primary hover:bg-[#1bc6a4] text-white text-[15px] font-bold leading-normal tracking-wide font-display shadow-gt-soft hover:shadow-gt-float transition-all duration-300 ease-gt-spring transform hover:-translate-y-1 active:translate-y-0">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>Create Graph</span>
+</button>
+</header>
+<!-- Main Content Area: Grid of Projects -->
+<main class="w-full px-4 pb-20">
+<!-- ACTIVE GRAPHS GRID -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center sm:justify-items-stretch" id="projects-grid">
+<!-- Project Card 1 -->
+<div class="w-full max-w-[320px] bg-gt-surface rounded-gt-card p-6 flex flex-col justify-between h-[180px] shadow-sm hover:shadow-gt-float transition-all duration-300 ease-gt-spring transform hover:-translate-y-1 cursor-pointer group border border-[#f0ebe1]/50">
+<div class="flex justify-between items-start">
+<h2 class="text-gt-text text-xl font-bold leading-tight font-display pr-4 group-hover:text-gt-primary transition-colors">Website Redesign</h2>
+<div class="relative w-12 h-12 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<!-- Background Circle -->
+<path class="text-gt-shimmer stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<!-- Progress Circle -->
+<path class="text-gt-primary stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="33, 100" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<p class="text-gt-muted text-sm font-medium font-body">4/12 tasks</p>
+<span class="material-symbols-outlined text-gt-muted opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0 duration-300 ease-gt-spring">arrow_forward</span>
+</div>
+</div>
+<!-- Project Card 2 -->
+<div class="w-full max-w-[320px] bg-gt-surface rounded-gt-card p-6 flex flex-col justify-between h-[180px] shadow-sm hover:shadow-gt-float transition-all duration-300 ease-gt-spring transform hover:-translate-y-1 cursor-pointer group border border-[#f0ebe1]/50">
+<div class="flex justify-between items-start">
+<h2 class="text-gt-text text-xl font-bold leading-tight font-display pr-4 group-hover:text-gt-primary transition-colors">Q3 Marketing Launch</h2>
+<div class="relative w-12 h-12 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-gt-shimmer stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="text-gt-primary stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="25, 100" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<p class="text-gt-muted text-sm font-medium font-body">2/8 tasks</p>
+<span class="material-symbols-outlined text-gt-muted opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0 duration-300 ease-gt-spring">arrow_forward</span>
+</div>
+</div>
+<!-- Project Card 3 -->
+<div class="w-full max-w-[320px] bg-gt-surface rounded-gt-card p-6 flex flex-col justify-between h-[180px] shadow-sm hover:shadow-gt-float transition-all duration-300 ease-gt-spring transform hover:-translate-y-1 cursor-pointer group border border-[#f0ebe1]/50">
+<div class="flex justify-between items-start">
+<h2 class="text-gt-text text-xl font-bold leading-tight font-display pr-4 group-hover:text-gt-primary transition-colors">App Onboarding Flow</h2>
+<div class="relative w-12 h-12 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-gt-shimmer stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="text-gt-primary stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="80, 100" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<p class="text-gt-muted text-sm font-medium font-body">4/5 tasks</p>
+<span class="material-symbols-outlined text-gt-muted opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0 duration-300 ease-gt-spring">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- EMPTY STATE (Hidden by default, shown via JS if no projects) -->
+<div class="hidden flex-col items-center justify-center py-20 px-4 text-center" id="empty-state">
+<div class="w-48 h-48 mb-8 rounded-full bg-[#f4f1ea] flex items-center justify-center">
+<span class="material-symbols-outlined text-[80px] text-gt-primary/50">account_tree</span>
+</div>
+<h3 class="text-2xl font-bold font-display text-gt-text mb-2">No graphs yet.</h3>
+<p class="text-gt-muted font-body text-base max-w-sm">Start connecting tasks and building your workflow by creating a new graph.</p>
+</div>
+<!-- LOADING STATE (Hidden by default) -->
+<div class="hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center sm:justify-items-stretch" id="loading-state">
+<div class="w-full max-w-[320px] bg-white rounded-gt-card p-6 flex flex-col justify-between h-[180px] border border-[#f0ebe1]/50">
+<div class="flex justify-between items-start gap-4">
+<div class="w-3/4 h-6 rounded-lg animate-shimmer"></div>
+<div class="w-12 h-12 rounded-full animate-shimmer flex-shrink-0"></div>
+</div>
+<div class="w-1/3 h-4 rounded-lg animate-shimmer mt-auto"></div>
+</div>
+<div class="w-full max-w-[320px] bg-white rounded-gt-card p-6 flex flex-col justify-between h-[180px] border border-[#f0ebe1]/50">
+<div class="flex justify-between items-start gap-4">
+<div class="w-2/3 h-6 rounded-lg animate-shimmer"></div>
+<div class="w-12 h-12 rounded-full animate-shimmer flex-shrink-0"></div>
+</div>
+<div class="w-1/4 h-4 rounded-lg animate-shimmer mt-auto"></div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</div>
+</div>
+<script>
+    // Simple script to demonstrate how empty/loading states could be toggled.
+    // In a real app, this would be tied to data fetching.
+</script>
+</body></html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Conversational Entry Modal</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#20dfb9",
+              "background-light": "#FDFBF7",
+              "background-dark": "#11211e",
+              "surface": "#FFFFFF",
+              "text-main": "#4A4A4A",
+              "text-muted": "#B5B5B5",
+            },
+            fontFamily: {
+              "display": ["Quicksand", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "1rem", 
+              "lg": "2rem", 
+              "xl": "3rem", 
+              "full": "9999px",
+              "drawer": "24px",
+              "block": "16px"
+            },
+            boxShadow: {
+              "soft": "0 12px 32px rgba(158, 188, 182, 0.15)",
+              "float": "0 20px 40px rgba(74, 74, 74, 0.08)",
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f6f8f8;
+        }
+        .modal-animate {
+            animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light font-display antialiased text-text-main overflow-hidden">
+<!-- Scrim / Backdrop -->
+<div class="fixed inset-0 bg-[#4A4A4A]/40 backdrop-blur-md z-40 flex items-center justify-center p-4">
+<!-- Centered Popup Modal -->
+<div class="modal-animate relative z-50 w-full max-w-[520px] aspect-[4/5] flex flex-col bg-surface rounded-drawer shadow-float border border-white/50 overflow-hidden">
+<!-- Header -->
+<header class="pt-8 px-8 pb-4 flex justify-between items-center shrink-0">
+<h2 class="font-display font-bold text-xl text-text-main">Quick Entry</h2>
+<button aria-label="Close modal" class="p-2 text-text-muted hover:text-text-main hover:bg-background-light rounded-full transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</header>
+<!-- Chat Content Area -->
+<div class="flex-1 overflow-y-auto hide-scrollbar px-8 py-2 space-y-6">
+<!-- Bot Message Group -->
+<div class="flex items-start gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 shrink-0 shadow-sm border border-white" data-alt="Bot Avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCgCodfLLw_9oOYAZRQ3cI4LWcbbDd4VK6fHGSyk1Lg8laOXgnyw7h4dEbnOjZ2JQuHwmxbxOsx_-SiHupblTJod8U6JxoggDtgrhxt1mLphiTq6YmAr9oFmZ7Sd3n5mZdbSRKeyaKtZ_7XDWSfGblwLvX80I8igKxosk08xamwb0Cr5c36MKmteLHDpKKwyVZrvWsPOXq6OyCf2rghSisZaqP3awbbTntpQLLQomD29vqxjjrZnhrDwsQoc4OEZ049gRo4efOl3iKE");'>
+</div>
+<div class="flex flex-col gap-1.5 items-start max-w-[80%]">
+<p class="text-text-muted text-[13px] font-semibold px-1">Assistant</p>
+<div class="rounded-2xl rounded-tl-none px-5 py-4 bg-background-light text-text-main text-base font-medium leading-relaxed shadow-sm">
+                        Does 'Deploy server' depend on anything?
+                    </div>
+</div>
+</div>
+<!-- Suggestions -->
+<div class="flex flex-wrap gap-2 pt-2">
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/10 px-5 text-primary font-semibold text-sm transition-all hover:bg-primary/20 hover:-translate-y-0.5 active:translate-y-0">
+                    Design homepage
+                </button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-background-light px-5 text-text-main border border-gray-100 font-semibold text-sm transition-all hover:bg-gray-100 hover:-translate-y-0.5 active:translate-y-0">
+                    Create wireframes
+                </button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-background-light px-5 text-text-main border border-gray-100 font-semibold text-sm transition-all hover:bg-gray-100 hover:-translate-y-0.5 active:translate-y-0">
+                    Setup database
+                </button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-background-light px-5 text-text-main border border-gray-100 font-semibold text-sm transition-all hover:bg-gray-100 hover:-translate-y-0.5 active:translate-y-0">
+                    Configure CI/CD
+                </button>
+</div>
+</div>
+<!-- Input Section -->
+<footer class="p-8 shrink-0">
+<div class="relative group">
+<div class="flex w-full items-stretch rounded-2xl shadow-inner bg-background-light border border-transparent focus-within:border-primary/30 transition-all focus-within:ring-4 focus-within:ring-primary/10">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-2xl text-text-main focus:outline-0 focus:ring-0 border-none bg-transparent h-14 placeholder:text-text-muted p-5 text-base font-medium" placeholder="Select or type a dependency..." value=""/>
+<div class="flex items-center pr-4">
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-lg hover:scale-110 active:scale-95 transition-transform" data-icon="ArrowUp">
+<span class="material-symbols-outlined">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

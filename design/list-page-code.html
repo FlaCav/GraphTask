@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sequential Graph - List Page</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#20dfb9",
+              "background-light": "#FDFBF7",
+              "background-dark": "#11211e",
+              "surface": "#FFFFFF",
+              "text-main": "#4A4A4A",
+              "muted": "#B5B5B5",
+              "prereq": "#9CAEF6",
+              "dependent": "#F69C9C",
+            },
+            fontFamily: {
+              "display": ["Quicksand", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "3rem", "full": "9999px"},
+            boxShadow: {
+              'soft': '0 12px 32px rgba(158, 188, 182, 0.15)',
+              'float': '0 20px 40px rgba(74, 74, 74, 0.08)',
+            },
+            transitionTimingFunction: {
+              'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #FDFBF7;
+            color: #4A4A4A;
+            overflow-x: hidden;
+        }
+
+        /* SVG Canvas */
+        #dependency-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dependency-line {
+            fill: none;
+            stroke-width: 4;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        .dependency-line.active {
+            opacity: 1;
+            animation: drawLine 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .task-item {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 10;
+            position: relative;
+        }
+
+        .task-item:hover {
+            transform: translateX(8px);
+            background-color: #F8FDFB;
+            box-shadow: 0 20px 40px rgba(74, 74, 74, 0.08);
+        }
+
+        .task-anchor {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 3px solid #B5B5B5;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 11;
+        }
+
+        .task-anchor.left {
+            left: -6px;
+        }
+
+        .task-anchor.right {
+            right: -6px;
+        }
+
+        .task-item:hover .task-anchor {
+            opacity: 1;
+        }
+        
+        .status-pill {
+            transition: background-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen relative">
+<!-- Header / Nav Exception (Back to Main) -->
+<header class="fixed top-0 left-0 w-full p-6 z-50 flex items-center bg-background-light/80 backdrop-blur-md">
+<a class="flex items-center gap-2 text-muted hover:text-text-main transition-colors font-semibold" href="#">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+            Back to Dashboard
+        </a>
+</header>
+<!-- SVG Layer for Dependencies -->
+<svg id="dependency-canvas">
+<!-- Lines will be injected here via JS -->
+</svg>
+<!-- Main Content Container -->
+<main class="relative z-10 max-w-[680px] mx-auto pt-[120px] pb-[160px] px-6 min-h-screen flex flex-col gap-6" id="task-list">
+<!-- Task Header -->
+<div class="mb-4">
+<h1 class="text-3xl font-bold text-text-main">Project Alpha Launch</h1>
+<p class="text-muted mt-2 font-medium">Map out your critical path.</p>
+</div>
+<!-- Task Items -->
+<div class="task-item bg-surface h-[80px] rounded-full shadow-soft flex items-center justify-between px-8 cursor-pointer border border-gray-100" data-dependent="task-2,task-3" data-id="task-1" data-prereq="">
+<div class="task-anchor left"></div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+<h2 class="text-lg font-bold text-text-main">Define Core Requirements</h2>
+</div>
+<div class="status-pill bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm font-bold">
+                Done
+            </div>
+<div class="task-anchor right"></div>
+</div>
+<div class="task-item bg-surface h-[80px] rounded-full shadow-soft flex items-center justify-between px-8 cursor-pointer border border-gray-100" data-dependent="task-4" data-id="task-2" data-prereq="task-1">
+<div class="task-anchor left"></div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-muted">
+<span class="material-symbols-outlined" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<h2 class="text-lg font-bold text-text-main">Design homepage</h2>
+</div>
+<div class="status-pill bg-blue-50 text-blue-500 px-4 py-2 rounded-full text-sm font-bold">
+                In Progress
+            </div>
+<div class="task-anchor right"></div>
+</div>
+<div class="task-item bg-surface h-[80px] rounded-full shadow-soft flex items-center justify-between px-8 cursor-pointer border border-gray-100" data-dependent="task-5" data-id="task-3" data-prereq="task-1">
+<div class="task-anchor left"></div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-muted">
+<span class="material-symbols-outlined" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<h2 class="text-lg font-bold text-text-main">Setup Database Schema</h2>
+</div>
+<div class="status-pill bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm font-bold">
+                To Do
+            </div>
+<div class="task-anchor right"></div>
+</div>
+<div class="task-item bg-surface h-[80px] rounded-full shadow-soft flex items-center justify-between px-8 cursor-pointer border border-gray-100" data-dependent="task-6" data-id="task-4" data-prereq="task-2">
+<div class="task-anchor left"></div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-dependent">
+<span class="material-symbols-outlined" data-icon="block">block</span>
+</div>
+<h2 class="text-lg font-bold text-text-main">Create wireframes</h2>
+</div>
+<div class="status-pill bg-red-50 text-dependent px-4 py-2 rounded-full text-sm font-bold">
+                Blocked
+            </div>
+<div class="task-anchor right"></div>
+</div>
+<div class="task-item bg-surface h-[80px] rounded-full shadow-soft flex items-center justify-between px-8 cursor-pointer border border-gray-100" data-dependent="task-6" data-id="task-5" data-prereq="task-3">
+<div class="task-anchor left"></div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-muted">
+<span class="material-symbols-outlined" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<h2 class="text-lg font-bold text-text-main">Implement API Endpoints</h2>
+</div>
+<div class="status-pill bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm font-bold">
+                To Do
+            </div>
+<div class="task-anchor right"></div>
+</div>
+<div class="task-item bg-surface h-[80px] rounded-full shadow-soft flex items-center justify-between px-8 cursor-pointer border border-gray-100" data-dependent="" data-id="task-6" data-prereq="task-4,task-5">
+<div class="task-anchor left"></div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-muted">
+<span class="material-symbols-outlined" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<h2 class="text-lg font-bold text-text-main">End-to-End Testing</h2>
+</div>
+<div class="status-pill bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm font-bold">
+                To Do
+            </div>
+<div class="task-anchor right"></div>
+</div>
+</main>
+<!-- Floating Add Button -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
+<button class="bg-primary text-background-dark h-16 px-8 rounded-full shadow-float flex items-center gap-3 font-bold text-lg hover:scale-105 transition-transform duration-300 ease-spring">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+            Add Task
+        </button>
+</div>
+<!-- Script for Dynamic SVG Lines -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('dependency-canvas');
+            const tasks = document.querySelectorAll('.task-item');
+            
+            // Map task IDs to elements for easy lookup
+            const taskMap = {};
+            tasks.forEach(task => {
+                taskMap[task.dataset.id] = task;
+            });
+
+            // Function to draw a curved line between two points
+            function createCurvedLine(startX, startY, endX, endY, colorClass) {
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                
+                // Calculate bezier control points for a smooth vertical curve
+                const deltaY = endY - startY;
+                const curveOffset = Math.max(Math.abs(deltaY) / 2, 50);
+                
+                // We draw from left anchor of target to right anchor of source, but since layout is vertical list,
+                // we'll draw from center-bottom of prereq to center-top of dependent for a cleaner look
+                const d = `M ${startX} ${startY} C ${startX} ${startY + curveOffset}, ${endX} ${endY - curveOffset}, ${endX} ${endY}`;
+                
+                path.setAttribute('d', d);
+                path.setAttribute('class', `dependency-line stroke-${colorClass}`);
+                return path;
+            }
+
+            // Draw all lines on hover
+            tasks.forEach(task => {
+                task.addEventListener('mouseenter', () => {
+                    canvas.innerHTML = ''; // Clear previous
+                    
+                    const rect = task.getBoundingClientRect();
+                    const scrollY = window.scrollY;
+                    const scrollX = window.scrollX;
+                    
+                    const centerStartX = rect.left + scrollX + (rect.width / 2);
+                    const centerStartY = rect.top + scrollY + rect.height; // Bottom center
+                    const centerTopY = rect.top + scrollY; // Top center
+
+                    // Draw Pre-requisites (Upstream - Blue)
+                    const prereqs = task.dataset.prereq ? task.dataset.prereq.split(',') : [];
+                    prereqs.forEach(prereqId => {
+                        const pTask = taskMap[prereqId];
+                        if (pTask) {
+                            const pRect = pTask.getBoundingClientRect();
+                            const pEndX = pRect.left + scrollX + (pRect.width / 2);
+                            const pEndY = pRect.top + scrollY + pRect.height; // Connect to bottom of prereq
+                            
+                            // Swap start/end to draw from top of current task to bottom of prereq
+                            const path = createCurvedLine(centerStartX, centerTopY, pEndX, pEndY, 'prereq');
+                            canvas.appendChild(path);
+                            // Trigger reflow for animation
+                            void path.offsetWidth;
+                            path.classList.add('active');
+                            
+                            // Highlight anchor
+                            pTask.style.borderColor = '#9CAEF6';
+                        }
+                    });
+
+                    // Draw Dependents (Downstream - Pink)
+                    const dependents = task.dataset.dependent ? task.dataset.dependent.split(',') : [];
+                    dependents.forEach(depId => {
+                        const dTask = taskMap[depId];
+                        if (dTask) {
+                            const dRect = dTask.getBoundingClientRect();
+                            const dEndX = dRect.left + scrollX + (dRect.width / 2);
+                            const dEndY = dRect.top + scrollY; // Connect to top of dependent
+                            
+                            const path = createCurvedLine(centerStartX, centerStartY, dEndX, dEndY, 'dependent');
+                            canvas.appendChild(path);
+                            // Trigger reflow for animation
+                            void path.offsetWidth;
+                            path.classList.add('active');
+                            
+                            // Highlight anchor
+                            dTask.style.borderColor = '#F69C9C';
+                        }
+                    });
+                });
+
+                task.addEventListener('mouseleave', () => {
+                    const lines = canvas.querySelectorAll('.dependency-line');
+                    lines.forEach(line => line.classList.remove('active'));
+                    setTimeout(() => {
+                        canvas.innerHTML = '';
+                    }, 300); // Wait for fade out
+                    
+                    // Reset borders
+                    tasks.forEach(t => t.style.borderColor = '');
+                });
+            });
+            
+            // Handle window resize to recalculate paths if hovering
+            window.addEventListener('resize', () => {
+                canvas.innerHTML = '';
+            });
+        });
+    </script>
+</body></html>

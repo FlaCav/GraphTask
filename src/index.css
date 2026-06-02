@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-surface: #f3fbf6;
+  --color-surface-dim: #d4dcd7;
+  --color-surface-bright: #f3fbf6;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #edf6f1;
+  --color-surface-container: #e7f0eb;
+  --color-surface-container-high: #e2eae5;
+  --color-surface-container-highest: #dce4e0;
+  --color-on-surface: #151d1a;
+  --color-on-surface-variant: #3b4a45;
+  --color-inverse-surface: #2a322f;
+  --color-inverse-on-surface: #eaf3ee;
+  --color-outline: #6b7a74;
+  --color-outline-variant: #bacac3;
+  --color-surface-tint: #006b57;
+  --color-primary: #006b57;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #20dfb9;
+  --color-on-primary-container: #005e4c;
+  --color-inverse-primary: #20dfb9;
+  --color-secondary: #495b9d;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #a4b6fe;
+  --color-on-secondary-container: #334586;
+  --color-tertiary: #835500;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #ffb955;
+  --color-on-tertiary-container: #734a00;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-background: #f3fbf6;
+  --color-on-background: #151d1a;
+  --color-surface-variant: #dce4e0;
+  --color-background-warm: #FDFBF7;
+  --color-text-main: #4A4A4A;
+  --color-text-muted: #B5B5B5;
+  --color-blocked-by: #9CAEF6;
+  --color-blocks-danger: #F69C9C;
+  --color-link-teal: #17A387;
+  --color-surface-pure: #FFFFFF;
+
+  /* Border radius */
+  --radius-sm: 0.5rem;
+  --radius-DEFAULT: 1rem;
+  --radius-md: 1.5rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+  --radius-full: 9999px;
+
+  /* Fonts */
+  --font-display: 'Quicksand', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  background-color: #FDFBF7;
+  color: #4A4A4A;
+  font-family: 'Nunito', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}

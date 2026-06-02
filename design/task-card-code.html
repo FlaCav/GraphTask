@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task Detail Card</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Nunito:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#20dfb9",
+          "background-light": "#FDFBF7", // Warm cream
+          "background-dark": "#11211e",
+          "surface": "#FFFFFF",
+          "text-main": "#4A4A4A",
+          "text-muted": "#B5B5B5",
+          "prereq": "#9CAEF6",
+          "dependent": "#F69C9C",
+        },
+        fontFamily: {
+          "display": ["Quicksand", "sans-serif"],
+          "body": ["Nunito", "sans-serif"],
+        },
+        borderRadius: {
+          "DEFAULT": "1rem", 
+          "lg": "2rem", 
+          "xl": "3rem", 
+          "full": "9999px",
+          "drawer": "24px",
+          "block": "16px"
+        },
+        boxShadow: {
+          "soft": "0 12px 32px rgba(158, 188, 182, 0.15)",
+          "float": "0 20px 40px rgba(74, 74, 74, 0.08)",
+        },
+        transitionTimingFunction: {
+          "spring": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        }
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    background-color: theme('colors.background-light');
+    color: theme('colors.text-main');
+  }
+  
+  /* Hide scrollbar for a cleaner look but keep functionality */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .drawer-enter {
+    animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .dependency-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+</style>
+</head>
+<body class="font-body min-h-screen relative overflow-hidden flex justify-end p-6">
+<!-- Background overlay (dimmed area to focus on drawer) -->
+<div class="absolute inset-0 bg-[#4A4A4A]/5 backdrop-blur-[2px] z-0 pointer-events-none"></div>
+<!-- Task Detail Drawer -->
+<aside class="drawer-enter relative z-10 w-full max-w-[480px] h-full flex flex-col bg-surface rounded-drawer shadow-float border border-white/50 overflow-hidden">
+<!-- Header / Title -->
+<header class="pt-8 px-8 pb-4 flex justify-between items-start shrink-0">
+<div class="flex-1 group cursor-text">
+<h1 class="font-display font-bold text-[28px] leading-tight text-text-main group-hover:bg-background-light px-2 -mx-2 rounded-lg transition-colors outline-none" contenteditable="true" spellcheck="false">
+          Design homepage wireframes
+        </h1>
+<p class="text-text-muted text-sm font-semibold mt-1 px-2 -mx-2">Created today</p>
+</div>
+<button aria-label="Close drawer" class="ml-4 p-2 text-text-muted hover:text-text-main hover:bg-background-light rounded-full transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</header>
+<!-- Scrollable Content Area -->
+<div class="flex-1 overflow-y-auto hide-scrollbar px-8 pb-8 space-y-8">
+<!-- Rich Content Section (Shared Component Adaptation) -->
+<section class="space-y-4">
+<div class="flex flex-col gap-4">
+<label class="flex flex-col flex-1">
+<span class="font-display font-bold text-lg mb-2 text-text-main">Description</span>
+<textarea class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-block text-text-main focus:outline-0 focus:ring-2 focus:ring-primary/20 border-none bg-background-light min-h-[120px] placeholder:text-text-muted p-4 text-base font-normal leading-relaxed shadow-inner" placeholder="Add detailed context or criteria here...">Create low-fidelity wireframes for the new marketing homepage focusing on the 'Conversational Entry' product pitch. Ensure space for the interactive dependency visualization demo.</textarea>
+</label>
+</div>
+<!-- Links Component -->
+<div>
+<h3 class="font-display text-lg font-bold text-text-main pb-2 pt-2">Resources</h3>
+<div class="flex flex-wrap gap-2">
+<a class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-[#17A387] hover:bg-primary/20 rounded-full font-semibold text-sm transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[18px]">link</span>
+              Figma Board
+            </a>
+<a class="inline-flex items-center gap-2 px-4 py-2 bg-background-light text-text-main hover:bg-gray-100 rounded-full font-semibold text-sm border border-gray-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[18px]">article</span>
+              PRD Doc
+            </a>
+<button class="inline-flex items-center justify-center w-9 h-9 bg-background-light text-text-muted hover:text-text-main rounded-full border border-dashed border-text-muted hover:border-text-main transition-colors">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+<!-- Text Block Note -->
+<div class="bg-background-light p-5 rounded-block shadow-sm">
+<h4 class="font-display font-semibold text-text-main mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">lightbulb</span>
+            Key Constraint
+          </h4>
+<p class="text-text-main/80 text-[15px] leading-relaxed">
+            Must feel soft and welcoming. Avoid harsh grid lines. Use Milanote and Univerbal as primary visual references for the card structures.
+          </p>
+</div>
+</section>
+<!-- Divider -->
+<hr class="border-t border-gray-100"/>
+<!-- Dependencies Section -->
+<section class="space-y-6">
+<!-- Prerequisites (Upstream) -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<h3 class="font-display text-lg font-bold text-text-main flex items-center gap-2">
+<span class="material-symbols-outlined text-prereq text-[20px]">arrow_downward</span>
+              Blocked By
+            </h3>
+<button class="text-text-muted hover:text-prereq transition-colors">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+</button>
+</div>
+<div class="flex flex-col gap-2">
+<!-- Prerequisite Badge -->
+<button class="dependency-badge w-full text-left bg-prereq/10 hover:bg-prereq/20 border border-prereq/20 rounded-xl p-3 flex items-center gap-3 transition-all duration-300 group">
+<div class="w-8 h-8 rounded-full bg-prereq/20 flex items-center justify-center text-prereq group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-sm text-[#4a5578]">Finalize brand color palette</p>
+</div>
+<span class="material-symbols-outlined text-text-muted opacity-0 group-hover:opacity-100 transition-opacity text-[18px]">chevron_right</span>
+</button>
+<button class="dependency-badge w-full text-left bg-prereq/10 hover:bg-prereq/20 border border-prereq/20 rounded-xl p-3 flex items-center gap-3 transition-all duration-300 group">
+<div class="w-8 h-8 rounded-full bg-prereq/20 flex items-center justify-center text-prereq group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-sm text-[#4a5578] line-through opacity-70">Define User Personas</p>
+</div>
+<span class="material-symbols-outlined text-text-muted opacity-0 group-hover:opacity-100 transition-opacity text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Dependents (Downstream) -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<h3 class="font-display text-lg font-bold text-text-main flex items-center gap-2">
+<span class="material-symbols-outlined text-dependent text-[20px]">arrow_downward</span>
+              Blocks
+            </h3>
+<button class="text-text-muted hover:text-dependent transition-colors">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+</button>
+</div>
+<div class="flex flex-col gap-2">
+<!-- Dependent Badge -->
+<button class="dependency-badge w-full text-left bg-dependent/10 hover:bg-dependent/20 border border-dependent/20 rounded-xl p-3 flex items-center gap-3 transition-all duration-300 group">
+<div class="w-8 h-8 rounded-full bg-dependent/20 flex items-center justify-center text-dependent group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[16px]">hourglass_empty</span>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-sm text-[#8c5050]">Develop homepage frontend</p>
+</div>
+<span class="material-symbols-outlined text-text-muted opacity-0 group-hover:opacity-100 transition-opacity text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Actions -->
+<footer class="p-6 border-t border-gray-50 bg-surface mt-auto shrink-0 flex justify-center">
+<button class="flex items-center gap-2 text-text-muted hover:text-red-500 font-semibold text-sm py-2 px-4 rounded-full transition-colors group">
+<span class="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">delete</span>
+        Remove from graph
+      </button>
+</footer>
+</aside>
+<script>
+    // Simple script to handle 'forward navigation' visual feedback
+    document.querySelectorAll('.dependency-badge').forEach(badge => {
+      badge.addEventListener('click', function() {
+        const drawer = document.querySelector('aside');
+        
+        // Quick fade out/in effect to simulate loading new task data
+        drawer.style.opacity = '0.5';
+        drawer.style.transform = 'scale(0.98)';
+        drawer.style.transition = 'all 0.2s ease';
+        
+        setTimeout(() => {
+          drawer.style.opacity = '1';
+          drawer.style.transform = 'scale(1)';
+          
+          // Flash background to indicate change
+          const originalBg = drawer.style.backgroundColor;
+          drawer.style.backgroundColor = '#fdfcf9';
+          setTimeout(() => {
+             drawer.style.backgroundColor = originalBg;
+          }, 300);
+        }, 200);
+      });
+    });
+  </script>
+</body></html>
